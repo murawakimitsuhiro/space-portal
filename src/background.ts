@@ -1,9 +1,15 @@
 'use strict';
 
+import { uploadFile } from "./pkg/uploadFile";
+
 // With background scripts you can communicate with popup
 // and contentScript files.
 // For more information on background script,
 // See https://developer.chrome.com/extensions/background_pages
+
+const eventContextMenuType = {
+  UploadToSpace: 'uploadToSpace'
+} as const
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.type === 'GREETINGS') {
@@ -20,17 +26,19 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 });
 
-{
-  chrome.runtime.onInstalled.addListener(() => {
-    chrome.contextMenus.create({
-      id: 'uploadToSpace',
-      title: 'リンク先を空間にアップロードする'
-    });
+chrome.runtime.onInstalled.addListener(() => {
+  chrome.contextMenus.create({
+    contexts: ['link'],
+    id: eventContextMenuType.UploadToSpace,
+    title: 'リンク先を空間にアップロードする'
   });
+});
 
-  // メニューをクリック時に実行
-  chrome.contextMenus.onClicked.addListener(item => {
-    console.log(item);
-    console.log(item.menuItemId);
-  });
-}
+chrome.contextMenus.onClicked.addListener(item => {
+  switch(item.menuItemId) {
+    case eventContextMenuType.UploadToSpace:
+      if (item.linkUrl) uploadFile(item.linkUrl)
+    default:
+      return
+  }
+});
