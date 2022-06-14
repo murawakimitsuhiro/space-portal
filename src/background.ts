@@ -30,7 +30,7 @@ chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.create({
     contexts: ['link'],
     id: eventContextMenuType.UploadToSpace,
-    title: 'リンク先を空間にアップロードする'
+    title: 'リンク先のファイルを空間にアップロード'
   });
 });
 
