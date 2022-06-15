@@ -6,6 +6,13 @@ const credential = {
 
 const scope = "https://www.googleapis.com/auth/drive"
 
+export const getGoogleToken = async (authorizeIfNeeded: boolean = true): Promise<string> => {
+    const { access_token } = await googleAuthStrage.get()
+    if (access_token) return access_token
+    const authorized = await authGoogle()
+    return authorized.access_token
+}
+
 interface GoogleAuthParam {
     state: string,
     access_token: string,
@@ -27,7 +34,7 @@ const googleAuthStrage = {
     },
 };
 
-export const authGoogle = async (): Promise<GoogleAuthParam> => {
+const authGoogle = async (): Promise<GoogleAuthParam> => {
     return await new Promise<GoogleAuthParam>((resolve, reject) => {
         chrome.identity.launchWebAuthFlow({
             url: oauth2UrlEndpoint(),
@@ -53,6 +60,7 @@ include_granted_scopes=true&
 response_type=token&
 state=${enc('spaceportal0616')}&
 redirect_uri=${enc(credential.redirect_uri)}&
-client_id=${enc(credential.client_id)}&
-prompt=consent`
+client_id=${enc(credential.client_id)}`
 }
+// loginのtestをするとき
+// &prompt=consent`

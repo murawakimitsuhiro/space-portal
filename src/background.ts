@@ -1,6 +1,6 @@
 'use strict';
 
-import { uploadFile } from "./pkg/uploadFile";
+import { uploadFile } from "./pkg/upload";
 
 // With background scripts you can communicate with popup
 // and contentScript files.
