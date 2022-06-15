@@ -1,13 +1,20 @@
+import { authGoogle } from "./google-auth"
 
 export const uploadFile = async (url: string) => {
-    console.debug('request to ', url)
-    const {filename, blob} = await fetchBlob(url)
-    console.debug('getted file ', filename)
-    const encodedData = await encodebase64(blob)
-    console.debug('encoded base64')
-    const driveUploadResponse = await uploadFileToGoogleDrive(filename, encodedData)
-        .then((res) => console.debug('success ', res))
-        .catch((e) => console.debug('failed ', e))
+    // console.debug('request to ', url)
+    // const {filename, blob} = await fetchBlob(url)
+    // console.debug('getted file ', filename)
+    // const encodedData = await encodebase64(blob)
+    // console.debug('encoded base64')
+    // const driveUploadResponse = await uploadFileToGoogleDrive(filename, encodedData)
+    //     .then((res) => console.debug('success ', res))
+    //     .catch((e) => console.debug('failed ', e))
+    await authorize()
+}
+
+const authorize = async () => {
+    const result = await authGoogle()
+    console.debug('google auth result', result)
 }
 
 const uploadFileToGoogleDrive = async (title: string, encodedData: string): Promise<any> => {

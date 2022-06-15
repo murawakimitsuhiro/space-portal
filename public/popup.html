@@ -7,6 +7,21 @@
 </head>
 <body>
   <div class="app">
+    <div id="g_id_onload"
+         data-client_id="CLIENT ID"
+         data-login_uri="http://localhost:8080/signin"
+         data-ux_mode="popup"
+         data-auto_prompt="false">
+    </div>
+    <div class="g_id_signin"
+         data-type="standard"
+         data-size="large"
+         data-theme="outline"
+         data-text="sign_in_with"
+         data-shape="rectangular"
+         data-logo_alignment="left">
+    </div>
+
     <p class="counter-label">Counter</p>
     <div id="counter" class="counter"></div>
     <div class="button-container">
@@ -21,12 +36,5 @@
   </div>
 
   <script src="popup.js"></script>
-
-  <!--
-    This HTML file opens when you click on icon from the toolbar.
-
-    To begin the development, run `npm run watch`.
-    To create a production bundle, use `npm run build`.
-  -->
 </body>
 </html>
