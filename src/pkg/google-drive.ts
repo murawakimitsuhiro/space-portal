@@ -1,9 +1,29 @@
 import { getGoogleToken } from "./google-auth"
 
+const baseUrl = 'https://www.googleapis.com/drive/v3/'
+
 export const getFolders = async () => {
+    return requestDriveAPI('files')
+}
+
+// export const postNewFile = async () => {
+//     const accessToken = await getGoogleToken()
+//     const endpoint = new URL(`https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart`)
+// }
+
+const requestDriveAPI = async (path: string, params: any | null = null, body: any = null) => {
     const accessToken = await getGoogleToken()
-    return fetch(`https://www.googleapis.com/drive/v3/about?fields=user&access_token=${accessToken}`)
-        .then(res => res.json())
+    const endpoint = new URL(`https://www.googleapis.com/drive/v3/${path}`)
+    const paramStr = params ? '?' + Object.keys(params).map(key => key + '=' + params[key]).join('&') : ''
+    return fetch(endpoint + paramStr, {
+        method: body ? 'POST' : 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
+        },
+        body: body,
+    })
+    .then(r => r.json())
 }
 
 
