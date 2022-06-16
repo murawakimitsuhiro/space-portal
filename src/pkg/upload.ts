@@ -1,15 +1,12 @@
-import { getFolders } from "./google-drive"
+import { getFolders, postNewFile } from "./google-drive"
 
 export const uploadFile = async (url: string) => {
-    // console.debug('request to ', url)
-    // const {filename, blob} = await fetchBlob(url)
-    // console.debug('getted file ', filename)
+    console.debug('request to ', url)
+    const {filename, blob} = await fetchBlob(url)
+    console.debug('getted file ', filename, ' type=', blob.type)
     // const encodedData = await encodebase64(blob)
     // console.debug('encoded base64')
-    // const driveUploadResponse = await uploadFileToGoogleDrive(filename, encodedData)
-    //     .then((res) => console.debug('success ', res))
-    //     .catch((e) => console.debug('failed ', e))
-    const result = await getFolders()
+    const result = await postNewFile(filename, blob)
     console.debug(result)
 }
 
@@ -26,9 +23,17 @@ const urlPattern = (url: string): any => {
 const fetchBlob = async (url: string): Promise<{filename: string, blob: Blob}> => {
     const response = await fetch(url)
     const blob = await response.blob()
-    const disposition = response.headers.get('Content-Disposition') ?? ''// ?.split('filename=')[1] ?? 'unknownfile'
-    const matches = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(disposition)
-    if (!matches || !matches[1]) return { filename: 'unknownfile', blob }
-    const filename = matches[1].replace(/['"]/g, '');
+    const filename = decodeFileNameByHeader(response.headers)
     return { filename, blob }
 }
+
+const decodeFileNameByHeader = (headers: Headers): string => {
+    const disposition = headers.get('Content-Disposition') ?? ''
+    const matches = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(disposition)
+    const matchesEncoded = /filename\*[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(disposition)
+    return matchesEncoded 
+        ? decodeURI(matchesEncoded[1].split("''")[1]) 
+        : matches ? matches[0] : 'unknown'
+}
+
+
