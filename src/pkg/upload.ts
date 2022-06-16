@@ -1,19 +1,18 @@
-import { getFolders, postNewFile } from "./google-drive"
+import { newScbPageUrl } from "./create-scrapbox-page"
+import * as gdrive from "./requests/google-drive"
+import { GoogleUploadedFile } from "./value-objects/file"
 
-export const uploadFile = async (url: string) => {
-    const {filename, blob} = await fetchBlob(url)
-    const result = await postNewFile(filename, blob)
-    console.debug(result)
+
+export const uploadFileAndOpenScrapbox = async (url: string) => {
+    const { id, name } = await downloadAndUploadFile(url)
+    const fileData = new GoogleUploadedFile(id, name, new URL(url))
+    const scbUrl = newScbPageUrl(fileData)
+    chrome.tabs.create({ url: scbUrl})
 }
 
-const urlPattern = (url: string): any => {
-    const domain: string | undefined = url.match(/(?<=[http|https]:\/\/)[^\/]+/g)?.[0]
-    if (!domain) return []
-    const pathTokens = url.split(domain)[1].split('?')[0].split('/').filter(v => v != '')
-    return pathTokens.reduce((acc, token) => {
-        const lastPath = acc[acc.length - 1]
-        return [...acc, `${lastPath}/${token}`]
-    }, [domain])
+const downloadAndUploadFile = async (url: string) => {
+    const {filename, blob} = await fetchBlob(url)
+    return await gdrive.postNewFile(filename, blob)
 }
 
 const fetchBlob = async (url: string): Promise<{filename: string, blob: Blob}> => {

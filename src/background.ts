@@ -1,6 +1,6 @@
 'use strict';
 
-import { uploadFile } from "./pkg/upload";
+import { uploadFileAndOpenScrapbox } from "./pkg/upload";
 
 // With background scripts you can communicate with popup
 // and contentScript files.
@@ -37,7 +37,7 @@ chrome.runtime.onInstalled.addListener(() => {
 chrome.contextMenus.onClicked.addListener(item => {
   switch(item.menuItemId) {
     case eventContextMenuType.UploadToSpace:
-      if (item.linkUrl) uploadFile(item.linkUrl)
+      if (item.linkUrl) uploadFileAndOpenScrapbox(item.linkUrl)
     default:
       return
   }
