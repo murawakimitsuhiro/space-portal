@@ -8,6 +8,7 @@ export const getFolders = async () => {
 }
 
 export const postNewFile = async (filename: string, blob: Blob) => {
+    const accessToken = await getGoogleToken()
     const metadata = {
         name: filename,
         mineType: blob.type,
@@ -15,18 +16,24 @@ export const postNewFile = async (filename: string, blob: Blob) => {
     }
 
     const body = new FormData()
-    // body.append('name', filename)
-    // body.append('mimeType', blob.type)
-    // body.append('parents', '[' + spaceFolderId + ']')
-    body.append('metadata', JSON.stringify(metadata))
+    body.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
     body.append('file', blob)
 
-    return requestDriveAPI('files', { uploadType: "multipart" }, body)
+    const options = {
+        method: 'POST',
+        body: body,
+        headers: {
+            'Authorization': `Bearer ${accessToken}`,
+        },
+    }
+
+    return fetch(`https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart`, options)
+        .then(r => r.json())
 }
 
 const requestDriveAPI = async (path: string, params: any | null = null, body: any = null) => {
     const accessToken = await getGoogleToken()
-    const endpoint = new URL(`https://www.googleapis.com/drive/v3/${path}`)
+    const endpoint = new URL(baseUrl + path)
     const paramStr = params ? '?' + Object.keys(params).map(key => key + '=' + params[key]).join('&') : ''
     return fetch(endpoint + paramStr, {
         method: body ? 'POST' : 'GET',

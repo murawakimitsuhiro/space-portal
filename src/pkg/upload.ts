@@ -1,11 +1,7 @@
 import { getFolders, postNewFile } from "./google-drive"
 
 export const uploadFile = async (url: string) => {
-    console.debug('request to ', url)
     const {filename, blob} = await fetchBlob(url)
-    console.debug('getted file ', filename, ' type=', blob.type)
-    // const encodedData = await encodebase64(blob)
-    // console.debug('encoded base64')
     const result = await postNewFile(filename, blob)
     console.debug(result)
 }
