@@ -37,7 +37,7 @@ chrome.runtime.onInstalled.addListener(() => {
 chrome.contextMenus.onClicked.addListener(item => {
   switch(item.menuItemId) {
     case eventContextMenuType.UploadToSpace:
-      if (item.linkUrl) uploadFileAndOpenScrapbox(item.linkUrl)
+      if (item.linkUrl) uploadFileAndOpenScrapbox(item.linkUrl, item.pageUrl)
     default:
       return
   }

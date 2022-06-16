@@ -19,8 +19,11 @@
   "permissions": [
     "identity",
     "storage",
-    "activeTab",
-    "contextMenus"
+    "tab",
+    "contextMenus",
+    "scripting",
+    "http://*/",
+    "https://*/"
   ],
   "content_scripts": [
     {
