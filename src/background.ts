@@ -1,5 +1,6 @@
 'use strict';
 
+import { historiesMinutes } from "./pkg/history";
 import { uploadFileAndOpenScrapbox } from "./pkg/upload";
 
 // With background scripts you can communicate with popup

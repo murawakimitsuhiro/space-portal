@@ -1,16 +1,25 @@
+import { historiesMinutes } from "./history"
 import { UploadedFile } from "./value-objects/file"
 
-export const newScbPageUrl = (file: UploadedFile): string => {
-    const pageTitle = encodeURIComponent(`${file.name}(${file.sourcePageUrl.hostname})`)
-    const urlPatterns = Array.from(new Set(urlPattern(file.sourcePageUrl.toString())))
+const referenceHistoryMinute = 15
+
+export const newScbPageUrl = async (file: UploadedFile): Promise<string> => {
+    const pageTitle = encodeURIComponent(`${file.name}(${file.sourceUrl.hostname})`)
+    // ファイルをダウンロードした場所でカウント
+    // const linkList = Array.from(new Set(urlPattern(file.sourcePageUrl.toString())))
+    //     .sort((a, b) => b.length - a.length)
+    //     .map(url => `[${url}]`)
+    const histories = await historyTitles()
+    const linkList = histories
         .sort((a, b) => b.length - a.length)
         .map(url => `[${url}]`)
+
     const content = `[${file.name} ${file.fileAccessUrl}]
 code: meta.json
  ${JSON.stringify(file)}
  
 [* links]
- ${urlPatterns.join('\n ')}
+ ${linkList.join('\n ')}
 `
     return `${currentProjectUrl()}${pageTitle}?body=${encodeURIComponent(content)}` 
 }
@@ -19,6 +28,13 @@ const currentProjectUrl = ():string => {
     // todo 
     const projName = 'mrwk-space'
     return `https://scrapbox.io/${projName}/`
+}
+
+const historyTitles = async (): Promise<string[]> => {
+    return historiesMinutes(referenceHistoryMinute)
+        .then(hs => hs.reduce((acc: string[], item):string[] => {
+          return item.title ? [...acc, item.title] : acc
+        }, []))
 }
 
 const urlPattern = (url: string): string[] => {

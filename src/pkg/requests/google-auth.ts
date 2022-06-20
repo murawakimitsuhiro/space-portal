@@ -60,8 +60,7 @@ include_granted_scopes=true&
 response_type=token&
 state=${enc(state)}&
 redirect_uri=${enc(credential.redirect_uri)}&
-&prompt=consent&
 client_id=${enc(credential.client_id)}`
 }
 // loginのtestをするとき
-// &prompt=consent`
+// &prompt=consent&`

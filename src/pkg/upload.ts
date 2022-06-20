@@ -7,7 +7,7 @@ export const uploadFileAndOpenScrapbox = async (fileUrl: string, pageUrl: string
     const { id, name } = await downloadAndUploadFile(fileUrl)
 
     const fileData = new GoogleUploadedFile(id, name, new URL(pageUrl), new URL(pageUrl))
-    const scbNewPageUrl = newScbPageUrl(fileData)
+    const scbNewPageUrl = await newScbPageUrl(fileData)
 
     chrome.tabs.create({ url: scbNewPageUrl })
 }
