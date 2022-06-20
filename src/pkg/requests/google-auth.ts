@@ -30,13 +30,15 @@ const googleAuthStrage = {
 
 const authGoogle = async (): Promise<GoogleAuthParam> => {
     return await new Promise<GoogleAuthParam>((resolve, reject) => {
+        const datehash = (+new Date).toString(36)
         chrome.identity.launchWebAuthFlow({
-            url: oauth2UrlEndpoint(),
+            url: oauth2UrlEndpoint(datehash),
             interactive: true
         }, (redirectUrl?: string) => {
             if (redirectUrl) {
                 const search = redirectUrl.split('#')[1]
-                const newAuthParam = JSON.parse('{"' + decodeURI(search).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g, '":"') + '"}')
+                const newAuthParam: GoogleAuthParam = JSON.parse('{"' + decodeURI(search).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g, '":"') + '"}')
+                if (newAuthParam.state !== datehash) reject('Invalid state')
                 resolve(newAuthParam as GoogleAuthParam)
             } else {
                 reject('Google Auth Failed. ')
@@ -46,7 +48,7 @@ const authGoogle = async (): Promise<GoogleAuthParam> => {
     .then(googleAuthStrage.set)
 }
 
-const oauth2UrlEndpoint = () => {
+const oauth2UrlEndpoint = (state: string) => {
     const credential = {
         client_id : "685685356056-ovt7sh0d7ane00eek739s1ka3mecdqtu.apps.googleusercontent.com",
         redirect_uri : "https://pfpijbphlehdhcfcfjdenkfnncjiilmn.chromiumapp.org",
@@ -56,7 +58,7 @@ const oauth2UrlEndpoint = () => {
 scope=${enc(scope)}&
 include_granted_scopes=true&
 response_type=token&
-state=${enc('spaceportal0616')}&
+state=${enc(state)}&
 redirect_uri=${enc(credential.redirect_uri)}&
 &prompt=consent&
 client_id=${enc(credential.client_id)}`

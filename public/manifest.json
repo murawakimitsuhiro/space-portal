@@ -19,6 +19,7 @@
   "permissions": [
     "identity",
     "storage",
+    "history",
     "tab",
     "contextMenus",
     "scripting",

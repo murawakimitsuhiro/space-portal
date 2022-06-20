@@ -4,7 +4,6 @@ import { GoogleUploadedFile } from "./value-objects/file"
 
 
 export const uploadFileAndOpenScrapbox = async (fileUrl: string, pageUrl: string) => {
-    // getContext()
     const { id, name } = await downloadAndUploadFile(fileUrl)
 
     const fileData = new GoogleUploadedFile(id, name, new URL(pageUrl), new URL(pageUrl))
@@ -23,23 +22,6 @@ const fetchBlob = async (url: string): Promise<{filename: string, blob: Blob}> =
     const blob = await response.blob()
     const filename = decodeFileNameByHeader(response.headers)
     return { filename, blob }
-}
-
-const getContext = async () => {
-    // const queryOptions = { active: true, lastFocusedWindow: true };
-    // const [tab] = await chrome.tabs.query(queryOptions);
-    // const getHistory = () => {
-    //     console.debug('hello', window.history)
-    //     return document.title
-    // }
-    // if (!tab.id) return
-    // chrome.scripting.executeScript({
-    //         target: { tabId: tab.id },
-    //         func: getHistory,
-    //     },
-    //     (ans) => {
-    //         console.debug('ans', ans)
-    //     });
 }
 
 const decodeFileNameByHeader = (headers: Headers): string => {
