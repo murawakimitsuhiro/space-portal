@@ -7,34 +7,31 @@
 </head>
 <body>
   <div class="app">
-    <div id="g_id_onload"
-         data-client_id="CLIENT ID"
-         data-login_uri="http://localhost:8080/signin"
-         data-ux_mode="popup"
-         data-auto_prompt="false">
-    </div>
-    <div class="g_id_signin"
-         data-type="standard"
-         data-size="large"
-         data-theme="outline"
-         data-text="sign_in_with"
-         data-shape="rectangular"
-         data-logo_alignment="left">
-    </div>
-
-    <p class="counter-label">Counter</p>
-    <div id="counter" class="counter"></div>
-    <div class="button-container">
-      <button id="decrementBtn" class="button">-</button>
-      <button id="incrementBtn" class="button">+</button>
-    </div>
-
-    <hr class="divider" />
-
-    <p class="title">Chrome Extension is Ready!</p>
-    <p class="subtitle">Start by updating <code>popup.html</code></p>
+    <h6>Select to Space Scrapbox Project</h6>
+    <details role="list">
+      <summary aria-haspopup="listbox">select project</summary>
+      <ul role="listbox">
+        <li>
+          <label for="small">
+            <input type="radio" id="small" name="size" value="small">
+            Small
+          </label>
+        </li>
+        <li>
+          <label for="medium">
+            <input type="radio" id="medium" name="size" value="medium">
+            Medium
+          </label>
+        </li>
+        <li>
+          <label for="large">
+            <input type="radio" id="large" name="size" value="large">
+            Large
+          </label>
+        </li>
+      </ul>
+    </details>
   </div>
-
   <script src="popup.js"></script>
 </body>
 </html>

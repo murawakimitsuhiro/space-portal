@@ -1,0 +1,13 @@
+@import "~@picocss/pico/scss/pico.scss";
+
+body {
+  width: 350px;
+  height: 150px;
+}
+
+.app {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
