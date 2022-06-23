@@ -1,6 +1,7 @@
 const scope = "https://www.googleapis.com/auth/drive"
 
 export const getGoogleToken = async (authorizeIfNeeded: boolean = true): Promise<string> => {
+    const saveGAuth = await googleAuthStrage.get()
     const { access_token } = await googleAuthStrage.get()
     if (access_token) return access_token
     const authorized = await authGoogle()
@@ -18,7 +19,7 @@ interface GoogleAuthParam {
 const googleAuthStrage = {
     get: async (): Promise<GoogleAuthParam> => {
         return await new Promise(resolve => {
-            chrome.storage.sync.get(['googleAuth'], result => resolve(result as GoogleAuthParam))
+            chrome.storage.sync.get(['googleAuth'], result => resolve(result.googleAuth as GoogleAuthParam))
         })
     },
     set: async (value: GoogleAuthParam): Promise<GoogleAuthParam> => {
@@ -28,7 +29,7 @@ const googleAuthStrage = {
     },
 };
 
-const authGoogle = async (): Promise<GoogleAuthParam> => {
+export const authGoogle = async (): Promise<GoogleAuthParam> => {
     return await new Promise<GoogleAuthParam>((resolve, reject) => {
         const datehash = (+new Date).toString(36)
         chrome.identity.launchWebAuthFlow({

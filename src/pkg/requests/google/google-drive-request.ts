@@ -1,13 +1,20 @@
-import { getGoogleToken } from "./google-auth"
+import { authGoogle, getGoogleToken } from "./google-auth"
 
 const baseUrl = 'https://www.googleapis.com/drive/v3/'
 const spaceFolderId = '1B319-6XlHCTbsq0aFWZVHY74QSAblemm' // todo: hard coding
+
+export interface UploadedResponse {
+    id: string
+    kind: string
+    mimeType: string
+    name: string
+}
 
 export const getFolders = async () => {
     return requestDriveAPI('folders')
 }
 
-export const postNewFile = async (filename: string, blob: Blob) => {
+export const postNewFile = async (filename: string, blob: Blob): Promise<UploadedResponse> => {
     const accessToken = await getGoogleToken()
     const metadata = {
         name: filename,
@@ -28,7 +35,17 @@ export const postNewFile = async (filename: string, blob: Blob) => {
     }
 
     return fetch(`https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart`, options)
-        .then(r => r.json())
+        .then((r:Response) => {
+            if (r.ok) return r.json()
+            if (r.status == 401) {
+                return authGoogle().then(_ => postNewFile(filename, blob))
+            }
+            throw new Error(r.statusText);
+        })
+        .then(r => {
+            console.debug('json', r)
+            return r
+        })
 }
 
 const requestDriveAPI = async (path: string, params: any | null = null, body: any = null) => {

@@ -1,11 +1,12 @@
 import { newScbPageUrl } from "./create-scrapbox-page"
-import * as gdrive from "./requests/google-drive"
+import * as gdrive from "./requests/google/google-drive-request"
 import { GoogleUploadedFile } from "./value-objects/file"
 
 
 export const uploadFileAndOpenScrapbox = async (fileUrl: string, pageUrl: string) => {
-    const { id, name } = await downloadAndUploadFile(fileUrl)
-
+    const uploaded = await downloadAndUploadFile(fileUrl)
+        .catch(e => {throw `upload error ${e}`})
+    const { id, name } = uploaded
     const fileData = new GoogleUploadedFile(id, name, new URL(pageUrl), new URL(pageUrl))
     const scbNewPageUrl = await newScbPageUrl(fileData)
 
