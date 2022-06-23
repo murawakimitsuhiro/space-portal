@@ -1,5 +1,6 @@
 import { historiesMinutes } from "./history"
 import * as UrlHelper from "./uitl/url-helper"
+import { currentProjetNameStorage } from "./user-settings"
 import { UploadedFile } from "./value-objects/file"
 
 const referenceHistoryMinute = 15
@@ -21,9 +22,9 @@ code: meta.json
     return `${currentProjectUrl()}${pageTitle}?body=${encodeURIComponent(content)}` 
 }
 
-const currentProjectUrl = ():string => {
-    // todo 
-    const projName = 'mrwk-space'
+const currentProjectUrl = async ():Promise<string> => {
+    const projName = await currentProjetNameStorage.get()
+    if (!projName) throw 'didnt select project'
     return `https://scrapbox.io/${projName}/`
 }
 

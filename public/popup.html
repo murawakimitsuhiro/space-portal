@@ -2,36 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>My Chrome Extension</title>
+    <title>Portal Popup</title>
     <link rel="stylesheet" href="popup.css" />
 </head>
 <body>
   <div class="app">
     <h6>Select to Space Scrapbox Project</h6>
     <details role="list">
-      <summary aria-haspopup="listbox">select project</summary>
-      <ul role="listbox">
-        <li>
-          <label for="small">
-            <input type="radio" id="small" name="size" value="small">
-            Small
-          </label>
-        </li>
-        <li>
-          <label for="medium">
-            <input type="radio" id="medium" name="size" value="medium">
-            Medium
-          </label>
-        </li>
-        <li>
-          <label for="large">
-            <input type="radio" id="large" name="size" value="large">
-            Large
-          </label>
-        </li>
-      </ul>
+      <summary aria-haspopup="listbox" role="button" class="secondary" id="project-selector-summary"></summary>
+      <ul role="listbox" id="project-list"></ul>
     </details>
-  </div>
+    </div>
   <script src="popup.js"></script>
 </body>
 </html>

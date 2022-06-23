@@ -10,6 +10,9 @@ export interface ScbProject {
 }
 
 export const getProjects = async (): Promise<ScbProject[]> => {
-    const response = await fetch('https://scrapbox.io/api/projects')
-    return response.json()
+    return fetch('https://scrapbox.io/api/projects')
+        .then(r => {
+            if (!r.ok) throw 'faild to get scrapbox projects'
+            return r.json().then(json => json.projects)
+        })
 }

@@ -1,112 +1,55 @@
 'use strict';
 
+import { getProjects, ScbProject } from './pkg/requests/scrapbox-request';
+import { currentProjetNameStorage } from './pkg/user-settings';
 import './popup.scss';
 
-(function() {
-  // We will make use of Storage API to get and store `count` value
-  // More information on Storage API can we found at
-  // https://developer.chrome.com/extensions/storage
+(() => {
+  let projects: ScbProject[] = []
 
-  // To get storage access, we have to mention it in `permissions` property of manifest.json file
-  // More information on Permissions can we found at
-  // https://developer.chrome.com/extensions/declare_permissions
-  const counterStorage = {
-    get: (cb: (count: number) => void) => {
-      chrome.storage.sync.get(['count'], result => {
-        cb(result.count);
-      });
-    },
-    set: (value: number, cb: () => void) => {
-      chrome.storage.sync.set(
-        {
-          count: value,
-        },
-        () => {
-          cb();
-        }
-      );
-    },
-  };
-
-  function setupCounter(initialValue = 0) {
-    document.getElementById('counter')!.innerHTML = initialValue.toString();
-
-    document.getElementById('incrementBtn')!.addEventListener('click', () => {
-      updateCounter({
-        type: 'INCREMENT',
-      });
-    });
-
-    document.getElementById('decrementBtn')!.addEventListener('click', () => {
-      updateCounter({
-        type: 'DECREMENT',
-      });
-    });
+  const setup = async () => {
+    projects = await getProjects()
+    const selected = await currentProjetNameStorage.get()
+    updateScbProjectSelectorDom(selected)
   }
 
-  function updateCounter({ type }: { type: string }) {
-    counterStorage.get((count: number) => {
-      let newCount: number;
+  const updateScbProjectSelectorDom = (selectedName: string | null = null): void => {
+    document.querySelector('#project-list')!.innerHTML = projectElements()
 
-      if (type === 'INCREMENT') {
-        newCount = count + 1;
-      } else if (type === 'DECREMENT') {
-        newCount = count - 1;
-      } else {
-        newCount = count;
-      }
+    Array.from(document.querySelectorAll('.scb-project-option')).forEach(e => {
+      e.addEventListener('change', (e) => selectProject((e.target as HTMLInputElement).id))
+    })
 
-      counterStorage.set(newCount, () => {
-        document.getElementById('counter')!.innerHTML = newCount.toString();
+    const summaryElement = document.querySelector('#project-selector-summary')!
 
-        // Communicate with content script of
-        // active tab by sending a message
-        chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
-          const tab = tabs[0];
-
-          chrome.tabs.sendMessage(
-            tab.id!,
-            {
-              type: 'COUNT',
-              payload: {
-                count: newCount,
-              },
-            },
-            response => {
-              console.log('Current count value passed to contentScript file');
-            }
-          );
-        });
-      });
-    });
-  }
-
-  function restoreCounter() {
-    // Restore count value
-    counterStorage.get((count: number) => {
-      if (typeof count === 'undefined') {
-        // Set counter value as 0
-        counterStorage.set(0, () => {
-          setupCounter(0);
-        });
-      } else {
-        setupCounter(count);
-      }
-    });
-  }
-
-  document.addEventListener('DOMContentLoaded', restoreCounter);
-
-  // Communicate with background file by sending a message
-  chrome.runtime.sendMessage(
-    {
-      type: 'GREETINGS',
-      payload: {
-        message: 'Hello, my name is Pop. I am from Popup.',
-      },
-    },
-    response => {
-      console.log(response.message);
+    if (selectedName) {
+      (document.querySelector(`#${encodeURI(selectedName)}`) as HTMLInputElement).checked = true
+      summaryElement.innerHTML = selectedName
+    } else {
+      summaryElement.innerHTML = 'select'
     }
-  );
-})();
+  }
+
+  const projectElements = ():string => {
+    return projects
+    .sort((a,b) => b.updated - a.updated)
+    .map(p => {
+      const n = encodeURI(p.name)
+      return `
+        <li>
+          <label for="${n}">
+            <input type="radio" class="scb-project-option" id="${n}" name="scb-project" value="${n}">
+            ${p.displayName}
+          </label>
+        </li>`
+    })
+    .join('')
+  }
+
+  const selectProject = async (name: string) => {
+    await currentProjetNameStorage.set(decodeURI(name))
+    updateScbProjectSelectorDom(decodeURI(name))
+  }
+
+  setup()
+})()
