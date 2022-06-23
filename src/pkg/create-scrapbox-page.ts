@@ -1,15 +1,12 @@
 import { historiesMinutes } from "./history"
+import * as UrlHelper from "./uitl/url-helper"
 import { UploadedFile } from "./value-objects/file"
 
 const referenceHistoryMinute = 15
 
 export const newScbPageUrl = async (file: UploadedFile): Promise<string> => {
     const pageTitle = encodeURIComponent(`${file.name}(${file.sourceUrl.hostname})`)
-    // ファイルをダウンロードした場所でカウント
-    // const linkList = Array.from(new Set(urlPattern(file.sourcePageUrl.toString())))
-    //     .sort((a, b) => b.length - a.length)
-    //     .map(url => `[${url}]`)
-    const histories = await historyTitles()
+    const histories = await historyTitleAndHostname()
     const linkList = histories
         .sort((a, b) => b.length - a.length)
         .map(url => `[${url}]`)
@@ -30,11 +27,18 @@ const currentProjectUrl = ():string => {
     return `https://scrapbox.io/${projName}/`
 }
 
-const historyTitles = async (): Promise<string[]> => {
+const historyTitleAndHostname = async (): Promise<string[]> => {
     return historiesMinutes(referenceHistoryMinute)
-        .then(hs => hs.reduce((acc: string[], item):string[] => {
-          return item.title ? [...acc, item.title] : acc
+        .then(hs => hs.reduce((acc: string[], item): string[] => {
+            let label = item.title || "unknown title"
+            if (item.url) {
+                const host = UrlHelper.hostname(item.url)
+                label = `${item.title} (${host})`
+                if (host == 'scrapbox.io') label = UrlHelper.pathname(item.url)
+            }
+            return [...acc, label]
         }, []))
+        .then(hTitles => Array.from(new Set(hTitles)))
 }
 
 const urlPattern = (url: string): string[] => {

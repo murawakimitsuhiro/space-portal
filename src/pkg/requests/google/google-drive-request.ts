@@ -42,10 +42,6 @@ export const postNewFile = async (filename: string, blob: Blob): Promise<Uploade
             }
             throw new Error(r.statusText);
         })
-        .then(r => {
-            console.debug('json', r)
-            return r
-        })
 }
 
 const requestDriveAPI = async (path: string, params: any | null = null, body: any = null) => {
