@@ -47,8 +47,12 @@ export const findOrCreateSpaceFolder = async (): Promise<string> => {
 }
 
 const searchSpaceFolderId = async (): Promise<FilesResponse> => {
-    return requestDriveAPI('files', {
-        q: encodeURIComponent("name=\'Space\' and mimeType = \'application/vnd.google-apps.folder\' and parents in \'root\'")
+    const q = `parents in 'root' 
+        and name = 'Space'
+        and mimeType = 'application/vnd.google-apps.folder'
+        and trashed = false`
+    return requestDriveAPI<FilesResponse>('files', {
+        q: encodeURIComponent(q)
     })
 }
 
@@ -89,9 +93,6 @@ const createSpaceFolder = async (retry = 3): Promise<GDriveFile> => {
 const requestDriveAPI = <T extends GoogleApiResponse>
     (path: string, params: any | null = null, body: any = null, retry = 3)
     : Promise<T> => {
-
-    console.debug('called ')
-
     const endpoint = new URL(baseUrl + path)
     const paramStr = params ? '?' + Object.keys(params).map(key => key + '=' + params[key]).join('&') : ''
     return getGoogleToken()

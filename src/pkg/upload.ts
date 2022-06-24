@@ -6,10 +6,10 @@ import { GoogleUploadedFile } from "./value-objects/file"
 export const uploadFileAndOpenScrapbox = async (fileUrl: string, pageUrl: string) => {
     const uploaded = await downloadAndUploadFile(fileUrl)
         .catch(e => {throw `upload error ${e}`})
-    // const { id, name } = uploaded
-    // const fileData = new GoogleUploadedFile(id, name, new URL(pageUrl), new URL(pageUrl))
-    // const scbNewPageUrl = await newScbPageUrl(fileData)
-    // chrome.tabs.create({ url: scbNewPageUrl })
+    const { id, name } = uploaded
+    const fileData = new GoogleUploadedFile(id, name, new URL(pageUrl), new URL(pageUrl))
+    const scbNewPageUrl = await newScbPageUrl(fileData)
+    chrome.tabs.create({ url: scbNewPageUrl })
 }
 
 const downloadAndUploadFile = async (url: string) => {
@@ -17,9 +17,8 @@ const downloadAndUploadFile = async (url: string) => {
         fetchBlob(url),
         gdrive.findOrCreateSpaceFolder()
     ]).then(([{filename, blob}, folderId]) => {
-        console.debug('upload pre', filename, folderId)
+        return gdrive.postNewFile(filename, folderId, blob)
     })
-    // return await gdrive.postNewFile(filename, blob)
     // return {id: 'hfefad2', name: 'feklajfladk3'}
 }
 
