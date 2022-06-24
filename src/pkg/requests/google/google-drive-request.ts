@@ -3,18 +3,19 @@ import { authGoogle, getGoogleToken } from "./google-auth"
 const baseUrl = 'https://www.googleapis.com/drive/v3/'
 const spaceFolderId = '1B319-6XlHCTbsq0aFWZVHY74QSAblemm' // todo: hard coding
 
-export interface UploadedResponse {
+export interface GDriveFile {
     id: string
     kind: string
     mimeType: string
     name: string
 }
 
-export const getFolders = async () => {
-    return requestDriveAPI('folders')
+export interface FilesResponse {
+    files: GDriveFile[]
+    incompleteSearch: boolean
 }
 
-export const postNewFile = async (filename: string, blob: Blob): Promise<UploadedResponse> => {
+export const postNewFile = async (filename: string, blob: Blob, retry = 3): Promise<GDriveFile> => {
     const accessToken = await getGoogleToken()
     const metadata = {
         name: filename,
@@ -35,16 +36,17 @@ export const postNewFile = async (filename: string, blob: Blob): Promise<Uploade
     }
 
     return fetch(`https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart`, options)
-        .then((r:Response) => {
-            if (r.ok) return r.json()
-            if (r.status == 401) {
-                return authGoogle().then(_ => postNewFile(filename, blob))
-            }
-            throw new Error(r.statusText);
-        })
+        .then(retry > 0 ? validAuthError(postNewFile(filename, blob, --retry)) : r => r)
 }
 
-const requestDriveAPI = async (path: string, params: any | null = null, body: any = null) => {
+export const getSpaceFolderId = async () => {
+    return requestDriveAPI('files', {
+        q: "name = 'Space' and mimeType = 'application/vnd.google-apps.folder' and parents in 'root'"
+    })
+}
+
+const requestDriveAPI = async (path: string, params: any | null = null, body: any = null, retry = 3)
+    : Promise<FilesResponse> => {
     const accessToken = await getGoogleToken()
     const endpoint = new URL(baseUrl + path)
     const paramStr = params ? '?' + Object.keys(params).map(key => key + '=' + params[key]).join('&') : ''
@@ -56,19 +58,14 @@ const requestDriveAPI = async (path: string, params: any | null = null, body: an
         },
         body: body,
     })
-    .then(r => r.json())
+    .then(retry > 0 ? validAuthError(requestDriveAPI(path, params, body, --retry)) : r => r)
 }
 
-
-// GAS経由でpostしていた時のもの
-// const uploadFileToGoogleDrive = async (title: string, encodedData: string): Promise<any> => {
-//     const postUrl = 'https://script.google.com/macros/s/AKfycbxGPTb3Vcb9p2N7T8ZHgnJkvxhXVFFfc5R8wmGkBrTasFMnptwKG6rWk5x9bqjVKD3RbA/exec'
-//     const postedfile = await fetch(postUrl, {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify({ title: title, data: encodedData }),
-//     })
-//     return postedfile
-// }
+const validAuthError = <T>(retryFunc: Promise<T>) => async (res: Response) => {
+    if (res.ok) return res.json()
+    if (res.status == 401) {
+        const _ = await authGoogle()
+        return await retryFunc
+    }
+    throw new Error(res.statusText);
+}

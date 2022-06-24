@@ -1,7 +1,7 @@
 'use strict';
 
 import { getProjects, ScbProject } from './pkg/requests/scrapbox-request';
-import { currentProjetNameStorage } from './pkg/user-settings';
+import { UserSettings } from './pkg/user-settings';
 import './popup.scss';
 
 (() => {
@@ -9,7 +9,7 @@ import './popup.scss';
 
   const setup = async () => {
     projects = await getProjects()
-    const selected = await currentProjetNameStorage.get()
+    const selected = await UserSettings.currentProjetName.get()
     updateScbProjectSelectorDom(selected)
   }
 
@@ -47,7 +47,7 @@ import './popup.scss';
   }
 
   const selectProject = async (name: string) => {
-    await currentProjetNameStorage.set(decodeURI(name))
+    await UserSettings.currentProjetName.set(decodeURI(name))
     updateScbProjectSelectorDom(decodeURI(name))
   }
 

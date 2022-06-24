@@ -1,8 +1,9 @@
 'use strict';
 
 import { historiesMinutes } from "./pkg/history";
+import { getSpaceFolderId } from "./pkg/requests/google/google-drive-request";
 import { uploadFileAndOpenScrapbox } from "./pkg/upload";
-import { currentProjetNameStorage } from "./pkg/user-settings";
+import { UserSettings } from "./pkg/user-settings";
 
 // With background scripts you can communicate with popup
 // and contentScript files.
@@ -21,9 +22,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
     // Log message coming from the `request` parameter
     console.debug(request.payload.message);
-    currentProjetNameStorage.get()
-      .then(name => console.debug('scb projectname', name))
-    
+
+    // getSpaceFolderId()
+    //   .then(res => console.debug('response space ', res))
+    //   .catch(e => console.debug('error ', e))
+
+    UserSettings.currentProjetName.get().then(name => console.debug('name is ', name))
 
     // Send a response message
     sendResponse({
