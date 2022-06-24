@@ -1,7 +1,7 @@
 'use strict';
 
 import { historiesMinutes } from "./pkg/history";
-import { getSpaceFolderId } from "./pkg/requests/google/google-drive-request";
+import { findOrCreateSpaceFolder } from "./pkg/requests/google/google-drive-request";
 import { uploadFileAndOpenScrapbox } from "./pkg/upload";
 import { UserSettings } from "./pkg/user-settings";
 
@@ -22,12 +22,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
     // Log message coming from the `request` parameter
     console.debug(request.payload.message);
-
-    // getSpaceFolderId()
-    //   .then(res => console.debug('response space ', res))
-    //   .catch(e => console.debug('error ', e))
-
-    UserSettings.currentProjetName.get().then(name => console.debug('name is ', name))
 
     // Send a response message
     sendResponse({
