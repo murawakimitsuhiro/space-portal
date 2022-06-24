@@ -19,7 +19,8 @@ code: meta.json
 [* links]
  ${linkList.join('\n ')}
 `
-    return `${currentProjectUrl()}${pageTitle}?body=${encodeURIComponent(content)}` 
+    const scbBaseUrl = await currentProjectUrl()
+    return `${scbBaseUrl}${pageTitle}?body=${encodeURIComponent(content)}` 
 }
 
 const currentProjectUrl = async ():Promise<string> => {
