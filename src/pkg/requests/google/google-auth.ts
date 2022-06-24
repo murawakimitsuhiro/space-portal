@@ -1,11 +1,13 @@
 const scope = "https://www.googleapis.com/auth/drive"
 
 export const getGoogleToken = async (authorizeIfNeeded: boolean = true): Promise<string> => {
-    const saveGAuth = await googleAuthStrage.get()
-    const { access_token } = await googleAuthStrage.get()
-    if (access_token) return access_token
-    const authorized = await authGoogle()
-    return authorized.access_token
+    return googleAuthStrage.get()
+        .then(gAuth => {
+            if (gAuth.access_token) return gAuth.access_token
+            console.debug('Google Auth data is saved. But couldn\'t find access token.')
+            throw 'Google Auth data is saved. But couldn\'t find access token.'
+        })
+        .catch(() => authGoogle().then(auth => auth.access_token))
 }
 
 interface GoogleAuthParam {

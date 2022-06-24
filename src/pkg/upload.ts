@@ -1,9 +1,15 @@
 import { newScbPageUrl } from "./create-scrapbox-page"
 import * as gdrive from "./requests/google/google-drive-request"
+import { UserSettings } from "./user-settings"
 import { GoogleUploadedFile } from "./value-objects/file"
 
 
 export const uploadFileAndOpenScrapbox = async (fileUrl: string, pageUrl: string) => {
+    const scbProjectName = await UserSettings.currentProjetName.get()
+    if (!scbProjectName) {
+        chrome.tabs.create({ url: 'popup.html' })
+        return
+    }
     const uploaded = await downloadAndUploadFile(fileUrl)
         .catch(e => {throw `upload error ${e}`})
     const { id, name } = uploaded
@@ -25,18 +31,20 @@ const downloadAndUploadFile = async (url: string) => {
 const fetchBlob = async (url: string): Promise<{filename: string, blob: Blob}> => {
     const response = await fetch(url)
     const blob = await response.blob()
-    const filename = decodeFileNameByHeader(response.headers)
+    const filename = decodeFileNameByHeader(response.headers) || url.split('/').slice(-1)[0]
     return { filename, blob }
 }
 
-const decodeFileNameByHeader = (headers: Headers): string => {
+const decodeFileNameByHeader = (headers: Headers): string | null => {
     const disposition = headers.get('Content-Disposition') ?? ''
     const matches = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(disposition)
     const matchesEncoded = /filename\*[^;=\n]*=((['"]).*?\2|[^;\n]*)/.exec(disposition)
 
-    return matchesEncoded 
-        ? decodeURI(matchesEncoded[1].split("''")[1]) 
-        : matches ? matches[1].replace(/^"(.*)"$/, '$1') : 'unknown'
+    const encodedFileName = matchesEncoded ? decodeURI(matchesEncoded[1].split("''")[1]) : null
+    const filename = matches ? matches[1].replace(/^"(.*)"$/, '$1') : null
+
+    if (!filename && !encodedFileName) console.error('File name couldn\'t find. Content-Dispositon = ', disposition)
+    return encodedFileName || filename
 }
 
 

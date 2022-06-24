@@ -62,32 +62,6 @@ const createSpaceFolder = async (retry = 3): Promise<GDriveFile> => {
         mimeType: 'application/vnd.google-apps.folder',
     }
     return requestDriveAPI('files', null, JSON.stringify(metadata))
-
-    // return fetch("https://www.googleapis.com/drive/v3/files", {
-    //     method: 'POST',
-    //     headers: {
-    //         'Accept': 'application/json' ,
-    //         'Content-Type': 'application/json',
-    //         'Authorization': `Bearer ${accessToken}`,
-    //     },
-    //     body: '{"mimeType":"application/vnd.google-apps.folder","name":"test folder"}'  
-    // }) 
-    // .then(r => r.json())
-
-    // return requestDriveAPI('files', null, JSON.stringify(metadata))
-
-    // const body = new FormData()
-    // body.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }))
-
-    // const options = {
-    //     method: 'POST',
-    //     body: body,
-    //     headers: {
-    //         'Authorization': `Bearer ${accessToken}`,
-    //     },
-    // }
-    // return fetch(`https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart`, options)
-    //     .then(retry > 0 ? validAuthError(createSpaceFolder(--retry)) : r => r)
 }
 
 const requestDriveAPI = <T extends GoogleApiResponse>
