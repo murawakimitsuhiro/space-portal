@@ -20,11 +20,9 @@
     "identity",
     "storage",
     "history",
-    "tab",
+    "tabs",
     "contextMenus",
-    "scripting",
-    "http://*/",
-    "https://*/"
+    "scripting"
   ],
   "content_scripts": [
     {
