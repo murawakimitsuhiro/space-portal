@@ -29,9 +29,10 @@ const downloadAndUploadFile = async (url: string) => {
 }
 
 const fetchBlob = async (url: string): Promise<{filename: string, blob: Blob}> => {
-    const response = await fetch(url)
-    const blob = await response.blob()
-    const filename = decodeFileNameByHeader(response.headers) || url.split('/').slice(-1)[0]
+    const response = await fetch(url).catch(e => { throw 'response error' + e })
+    const blob = await response.blob().catch(e => { throw 'blob error' + e })
+    const splited = url.split('/')
+    const filename = decodeFileNameByHeader(response.headers) || splited.slice(-1)[0]
     return { filename, blob }
 }
 

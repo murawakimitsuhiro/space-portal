@@ -85,6 +85,8 @@ const requestDriveAPI = <T extends GoogleApiResponse>
 
 const validAuthError = <T>(retryFunc: () => Promise<T>) => (res: Response) => {
     if (res.ok) return res.json()
-    if (res.status === 401) return authGoogle().then(_ => retryFunc)
+    if (res.status === 401) {
+        return authGoogle().then(_ => retryFunc())
+    }
     throw new Error(res.statusText);
 }
