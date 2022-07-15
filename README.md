@@ -1,21 +1,18 @@
-# <img src="public/icons/icon_48.png" width="45" align="left"> Space Portal
-
-My Chrome Extension
+# <img src="public/icons/48x48.png" width="45" align="left"> Space Portal
 
 ## Features
+- Upload files to GoogleDrive from right-click while browsing a website
+- Create a page on Scrapbox for management
+  - At this time, the related files are linked by pouring the historical information into the page
 
-- Feature 1
-- Feature 2
+reference: [増井俊之/空間アプリ](https://scrapbox.io/masui/%E3%80%8C%E7%A9%BA%E9%96%93%E3%80%8D%E3%82%A2%E3%83%97%E3%83%AA)
 
 ## Install
 
-[**Chrome** extension]() <!-- TODO: Add chrome extension link inside parenthesis -->
+[**Chrome** Store]() (審査中）
 
-## Contribution
-
-Suggestions and pull requests are welcomed!.
-
----
-
-This project was bootstrapped with [Chrome Extension CLI](https://github.com/dutiyesh/chrome-extension-cli)
-
+### Development mode
+ - `$ npm install`
+ - `$ npm run watch`
+ - Open `chrome://extensions`
+   - In development mode, select the `build` folder
