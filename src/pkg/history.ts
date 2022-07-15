@@ -1,4 +1,4 @@
-import { flatMapAsync } from "./uitl/promise-map";
+import { flatMapAsync } from "./util/promise-map";
 
 export const historiesMinutes = async (minutes: number): Promise<chrome.history.HistoryItem[]> => {
     const microsecondsMinutes = 1000 * 60 * minutes

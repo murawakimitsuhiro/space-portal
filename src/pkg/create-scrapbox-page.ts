@@ -1,5 +1,5 @@
 import { historiesMinutes } from "./history"
-import * as UrlHelper from "./uitl/url-helper"
+import * as UrlHelper from "./util/url-helper"
 import { UserSettings } from "./user-settings"
 import { UploadedFile } from "./value-objects/file"
 
