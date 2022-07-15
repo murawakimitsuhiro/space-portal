@@ -16,3 +16,7 @@ export const getProjects = async (): Promise<ScbProject[]> => {
             return r.json().then(json => json.projects)
         })
 }
+
+
+// <iframe src="https://drive.google.com/file/d/1WJhfLhfQrCPfLERsOxd8RugFyrULsCaV/preview" 
+// width="640" height="480" allow="autoplay"></iframe>

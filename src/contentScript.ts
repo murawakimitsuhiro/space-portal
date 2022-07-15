@@ -1,5 +1,7 @@
 'use strict';
 
+import { UserSettings } from "./pkg/user-settings";
+
 // Content script file will run in the context of web page.
 // With content script you can manipulate the web pages using
 // Document Object Model (DOM).
@@ -11,11 +13,13 @@
 // For more information on Content Scripts,
 // See https://developer.chrome.com/extensions/content_scripts
 
-// Log `title` of current active web page
-const pageTitle: string | undefined = document.head.querySelector('title')?.innerHTML
-console.log(
-  `Page title is: '${pageTitle}' - evaluated by Chrome extension's 'contentScript.js' file`
-);
+// DOMの動きを監視
+// const observer = new MutationObserver(async () => {
+//   console.log('loaded scrapbox ', location.href)
+//   const spaceScbId = await UserSettings.currentProjetName.get()
+//   console.log('current selected ', spaceScbId)
+// })
+// observer.observe(document, { childList: true, subtree: true });
 
 // Communicate with background file by sending a message
 chrome.runtime.sendMessage(

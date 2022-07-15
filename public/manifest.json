@@ -21,8 +21,7 @@
     "storage",
     "history",
     "tabs",
-    "contextMenus",
-    "scripting"
+    "contextMenus"
   ],
   "content_scripts": [
     {

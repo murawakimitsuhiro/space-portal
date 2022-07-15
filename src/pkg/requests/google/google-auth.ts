@@ -52,9 +52,10 @@ export const authGoogle = async (): Promise<GoogleAuthParam> => {
 }
 
 const oauth2UrlEndpoint = (state: string) => {
+    const extId = chrome.runtime.id
     const credential = {
         client_id : "685685356056-ovt7sh0d7ane00eek739s1ka3mecdqtu.apps.googleusercontent.com",
-        redirect_uri : "https://pfpijbphlehdhcfcfjdenkfnncjiilmn.chromiumapp.org",
+        redirect_uri : `https://${extId}.chromiumapp.org`,
     }
     const enc = encodeURIComponent
     return `https://accounts.google.com/o/oauth2/v2/auth?
