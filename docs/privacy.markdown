@@ -1,6 +1,6 @@
 ---
 layout: page
-title: プライバシーポリシー
+title: privacy(ja)
 permalink: /pribacy/
 ---
 
