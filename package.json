@@ -23,6 +23,8 @@
   },
   "dependencies": {
     "@picocss/pico": "^1.5.3",
+    "html2canvas": "^1.4.1",
+    "tesseract.js": "^4.0.2",
     "ts-node": "^10.8.1"
   }
 }

@@ -2,16 +2,30 @@
 
 import { UserSettings } from "./pkg/user-settings";
 
-// Content script file will run in the context of web page.
-// With content script you can manipulate the web pages using
-// Document Object Model (DOM).
-// You can also pass information to the parent extension.
+import Tesseract from 'tesseract.js';
+import html2canvas from 'html2canvas';
 
-// We execute this script by making an entry in manifest.json file
-// under `content_scripts` property
-
-// For more information on Content Scripts,
-// See https://developer.chrome.com/extensions/content_scripts
+html2canvas(
+    document.body,
+    {
+        allowTaint: true,
+        width: window.innerWidth,
+        height: window.innerHeight,
+        scrollX: window.scrollX,
+        scrollY: window.scrollY,
+        x: window.scrollX,
+        y: window.scrollY,
+    })
+    .then(function(canvas) {
+        document.body.appendChild(canvas);
+        // Tesseract.recognize(
+        //     canvas,
+        //     'eng',
+        //     { logger: m => console.log(m) }
+        // ).then(({ data: { text } }) => {
+        //     console.debug(text);
+        // })
+    });
 
 // DOMの動きを監視
 // const observer = new MutationObserver(async () => {
@@ -20,6 +34,8 @@ import { UserSettings } from "./pkg/user-settings";
 //   console.log('current selected ', spaceScbId)
 // })
 // observer.observe(document, { childList: true, subtree: true });
+//
+// console.debug('hello')
 
 // Communicate with background file by sending a message
 chrome.runtime.sendMessage(
