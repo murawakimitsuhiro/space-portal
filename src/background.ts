@@ -46,12 +46,18 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       console.debug(debugWindowTabId)
       return
     case 'Screenshot':
-
+      chrome.tabs.captureVisibleTab((screenshotUrl) => {
+        console.debug('screenshot url', screenshotUrl)
+      })
+      return
     default:
       console.debug('receive message', request)
   }
 });
 
+// function setScreenshotUrl(url) {
+//   document.getElementById('target').src = url;
+// }
 
 chrome.action.onClicked.addListener((tab) => {
   chrome.tabs.create({"url": "screenshot.html" });

@@ -15,13 +15,15 @@
     "default_title": "Space Portal",
     "default_popup": "popup.html"
   },
+  "host_permissions": ["<all_urls>"],
   "permissions": [
     "identity",
     "storage",
     "history",
     "contextMenus",
     "activeTab",
-    "scripting"
+    "scripting",
+    "tabs"
   ],
   "content_scripts": [
     {
