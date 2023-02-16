@@ -15,7 +15,7 @@
     "default_title": "Space Portal",
     "default_popup": "popup.html"
   },
-  "host_permissions": ["<all_urls>"],
+  "host_permissions": ["chrome-extension://*", "<all_urls>"],
   "permissions": [
     "identity",
     "storage",

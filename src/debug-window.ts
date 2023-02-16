@@ -10,3 +10,5 @@ export function openDebugWindow(){
         }
     })
 }
+
+console.debug('debug window')

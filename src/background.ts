@@ -4,6 +4,7 @@ import { historiesMinutes } from "./pkg/history";
 import { findOrCreateSpaceFolder } from "./pkg/requests/google/google-drive-request";
 import { uploadFileAndOpenScrapbox } from "./pkg/upload";
 import { UserSettings } from "./pkg/user-settings";
+import tabId = chrome.devtools.inspectedWindow.tabId;
 
 const eventContextMenuType = {
   UploadToSpace: 'uploadToSpace',
@@ -47,7 +48,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       return
     case 'Screenshot':
       chrome.tabs.captureVisibleTab((screenshotUrl) => {
-        console.debug('screenshot url', screenshotUrl)
+        // chrome.scripting.executeScript({
+        //   target: { tabId: debugWindowTabId, allFrames: true },
+        //   func: setScreenshotUrl,
+        //   args: [screenshotUrl]
+        // })
       })
       return
     default:
@@ -55,9 +60,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 });
 
-// function setScreenshotUrl(url) {
-//   document.getElementById('target').src = url;
-// }
+function setScreenshotUrl(url: string) {
+  const target = document.getElementById('target') as HTMLImageElement
+  if (target) {
+    target.src = url;
+  }
+}
 
 chrome.action.onClicked.addListener((tab) => {
   chrome.tabs.create({"url": "screenshot.html" });
