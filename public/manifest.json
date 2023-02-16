@@ -19,7 +19,9 @@
     "identity",
     "storage",
     "history",
-    "contextMenus"
+    "contextMenus",
+    "activeTab",
+    "scripting"
   ],
   "content_scripts": [
     {

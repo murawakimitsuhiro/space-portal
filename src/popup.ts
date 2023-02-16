@@ -3,6 +3,7 @@
 import { getProjects, ScbProject } from './pkg/requests/scrapbox-request';
 import { UserSettings } from './pkg/user-settings';
 import './popup.scss';
+import { openDebugWindow } from './debug-window';
 
 (() => {
   let projects: ScbProject[] = []
@@ -11,6 +12,7 @@ import './popup.scss';
     projects = await getProjects()
     const selected = await UserSettings.currentProjetName.get()
     updateScbProjectSelectorDom(selected)
+    addListenerOpenDebugWindow()
   }
 
   const updateScbProjectSelectorDom = (selectedName: string | null = null): void => {
@@ -49,6 +51,10 @@ import './popup.scss';
   const selectProject = async (name: string) => {
     await UserSettings.currentProjetName.set(decodeURI(name))
     updateScbProjectSelectorDom(decodeURI(name))
+  }
+
+  const addListenerOpenDebugWindow = () => {
+    document.querySelector('#open-debug-button')?.addEventListener('click', openDebugWindow)
   }
 
   setup()
